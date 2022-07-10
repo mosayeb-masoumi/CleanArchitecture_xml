@@ -1,8 +1,10 @@
-package com.example.cleanarchitecture_xml.domain.usecase.get_list
+package com.example.cleanarchitecture_xml.domain.usecase.employee_usecase
 
 import com.example.cleanarchitecture_xml.common.Resource
+import com.example.cleanarchitecture_xml.data.remote.dto.get_employee.toEmolpyee
+import com.example.cleanarchitecture_xml.data.remote.dto.get_employee.toEmployeeData
 import com.example.cleanarchitecture_xml.data.remote.dto.get_list.toUserModelItem
-import com.example.cleanarchitecture_xml.domain.model.user_list.UserItemModel
+import com.example.cleanarchitecture_xml.domain.model.employee.Employee
 import com.example.cleanarchitecture_xml.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -10,16 +12,16 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class GetListUseCase @Inject constructor(private val repository: UserRepository){
+class GetEmployeeUseCase @Inject constructor(private val repository: UserRepository) {
 
 
-    operator fun invoke(): Flow<Resource<List<UserItemModel>>> = flow {
+    operator fun invoke(id: Int): Flow<Resource<Employee>> = flow {
 
         try {
 
             emit(Resource.Loading())
-            val users = repository.getShowsList().map { it.toUserModelItem() }
-            emit(Resource.Success(users))
+            val employee = repository.getEmployeeItem(id).toEmolpyee()
+            emit(Resource.Success(employee))
 
         }catch (e: HttpException){
             emit(Resource.Error(e.localizedMessage ?: "an unexpected error occured", null))

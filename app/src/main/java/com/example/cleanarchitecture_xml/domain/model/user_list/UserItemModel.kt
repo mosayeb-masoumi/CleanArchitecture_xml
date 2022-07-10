@@ -1,10 +1,9 @@
-package com.example.cleanarchitecture_xml.data.remote.dto
+package com.example.cleanarchitecture_xml.domain.model.user_list
 
-import com.example.cleanarchitecture_xml.domain.model.UserItemModel
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class UserItemModelDto(
+data class UserItemModel(
     @SerializedName("userId")
     @Expose
     val userId: Int,
@@ -18,16 +17,3 @@ data class UserItemModelDto(
     @Expose
     val completed :Boolean
 )
-
-
-fun UserItemModelDto.toUserModelItem(): UserItemModel{
-
-    return UserItemModel(
-        userId = userId,
-        id = id,
-        title = title,
-        completed = completed
-    )
-}
-
-

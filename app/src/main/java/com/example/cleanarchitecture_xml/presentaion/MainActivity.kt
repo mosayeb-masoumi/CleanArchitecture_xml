@@ -7,6 +7,7 @@ import androidx.compose.runtime.snapshots.Snapshot.Companion.observe
 import com.example.cleanarchitecture_xml.R
 import com.example.cleanarchitecture_xml.common.Constants
 import com.example.cleanarchitecture_xml.common.Resource
+import com.example.cleanarchitecture_xml.data.remote.dto.get_employee.toEmployeeData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -22,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+        /************************************** observe list **************************************/
         btn_get_list.setOnClickListener {
             Constants.BASE_URL = "https://jsonplaceholder.typicode.com/"
             mainViewModel.getUserList()
@@ -50,10 +52,50 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
+
+
+
+
+
+
+        /************************************** observe object **************************************/
+
+
+        var employeeId = 0
         btn_get_item.setOnClickListener {
 
-          Constants.BASE_URL = "https://dummy.restapiexample.com/api/v1/"
+            Constants.BASE_URL = "https://dummy.restapiexample.com/api/v1/"
 
+            employeeId++
+            //call
+            mainViewModel.getEmployee(employeeId)
+
+            // wait for observing
+            val getEmployeeLiveData = mainViewModel.getEmployeeLiveData
+            getEmployeeLiveData.observe(this) {
+
+                if(it !=null){
+                    if (it.status == Resource.Status.SUCCESS) {
+
+                        val result = it.data
+
+                        result?.data?.employee_name?.let {
+                            txt.text = result.data.toEmployeeData().employee_name
+                        }
+
+                        getEmployeeLiveData.removeObservers(this)
+                        mainViewModel.onEmployeeClear()  // to prevent looping
+
+                    } else if (it.status == Resource.Status.ERROR) {
+                        txt.text = it.message
+
+                    } else if (it.status == Resource.Status.LOADING) {
+                        txt.text = "loading..."
+                    }
+                }
+
+            }
         }
 
     }
